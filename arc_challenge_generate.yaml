@@ -1,19 +1,9 @@
-task: arc_challenge_generate
-
+task: arc2
 dataset_path: allenai/ai2_arc
 dataset_name: ARC-Challenge
-test_split: test
 validation_split: null
-fewshot_split: train
-
-metric_list:
-  - metric: acc
-    aggregation: mean
-    higher_is_better: true
-  - metric: acc_norm
-    aggregation: mean
-    higher_is_better: true
-
+test_split: test
+training_split: train
 output_type: multiple_choice
 
 doc_to_text: |
@@ -31,7 +21,36 @@ doc_to_text: |
 
   [COT]
 
-doc_to_choice: "{{ choices.label }}"
 doc_to_target: "{{ choices.label.index(answerKey) }}"
+doc_to_choice: |
+  [
+  {%- for l in choices.label %}
+    "The answer is {{ l }}"{% if not loop.last %}, {% endif %}
+  {%- endfor %}
+  ]
+
+should_decontaminate: true
+doc_to_decontamination_query: |
+  [INST] Answer the following question step by step. [/INST]
+
+  [QUESTION]
+  {{ question }}
+  [/QUESTION]
+
+  [CHOICES]
+  {%- for i in range(choices.label | length) %}
+  {{ choices.label[i] }}. {{ choices.text[i] }}
+  {%- endfor %}
+  [/CHOICES]
+
+  [COT]
+
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+  - metric: acc_norm
+    aggregation: mean
+    higher_is_better: true
 
 

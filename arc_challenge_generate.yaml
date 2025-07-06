@@ -2,29 +2,22 @@ task: arc_challenge_generate
 
 dataset_path: allenai/ai2_arc
 dataset_name: ARC-Challenge
-validation_split: validation
-test_split: null
+test_split: test
+validation_split: null
 fewshot_split: train
 
 metric_list:
-  - metric: accuracy
+  - metric: acc
     aggregation: mean
     higher_is_better: true
-  - metric: accuracy_normalized
+  - metric: acc_norm
     aggregation: mean
     higher_is_better: true
 
 output_type: multiple_choice
 
-generation_kwargs:
-  until:
-    - "\n\n"
-  do_sample: False
-  temperature: 0
-
-
 doc_to_text: |
-  [INST] Answer the following question step by step. [/INST]
+  [INST] Answer the following question step by step, then give only the letter of the correct answer (A, B, C, or D). [/INST]
 
   [QUESTION]
   {{ question }}
@@ -38,7 +31,7 @@ doc_to_text: |
 
   [COT]
 
-doc_to_target: "{{ answerKey }}"
-
+doc_to_choice: "{{ choices.label }}"
+doc_to_target: "{{ choices.label.index(answerKey) }}"
 
 

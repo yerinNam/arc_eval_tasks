@@ -17,7 +17,7 @@ metric_list:
 output_type: multiple_choice
 
 doc_to_text: |
-  [INST] Answer the following question step by step, then give only the letter of the correct answer (A, B, C, or D). [/INST]
+  [INST] Answer the following question step by step. [/INST]
 
   [QUESTION]
   {{ question }}
